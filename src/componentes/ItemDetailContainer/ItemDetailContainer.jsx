@@ -1,48 +1,37 @@
-import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { fetchProvisorio, precioXml } from "../../data/fetchProvisorio";
 
-// Creacion de variable para el facil cambio de precios de los productos (el cliente determina el precio x ml y cada producto tiene un precio segun el consumo de ml)
 
+const ItemDetailContainer = ({}) => {
+  const {idProducto} = useParams()
+  console.log(idProducto)
 
+  const [producto, setProductos] = useState([])
+  const [cargando, setCargando] = useState(true)
 
-//obtencion de stock desde el json
-
-const ItemListContainer = ({}) => {
-
-    const [productos, setProductos] = useState([])
-    const [cargando, setCargando] = useState(true)
-
-    const { idCategoria } = useParams()
-
-    useEffect(()=>{
-        if (idCategoria){
+  useEffect(()=>{
+        
             fetchProvisorio()
                 .then(res =>{
-                    setProductos(res.filter(producto => producto.categoria === idCategoria)
+                    setProductos(res.find(producto => producto.id === idProducto)
                     )})
                 .catch(error => console.log(error))
                 .finally(()=>setCargando(false))
-        }
-        else{
-            fetchProvisorio()
-                .then(res =>{
-                    setProductos(res)
-                    })
-                .catch(error => console.log(error))
-                .finally(()=>setCargando(false))
-        }
-    },[idCategoria])
+        
+    },[])
 
-    return (
+    console.log(producto)
+
+  return (
             cargando ? <h2>Estamos cargando los datos, por favor aguarde...</h2>:
-            
+
             <div style={{
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap'
                 }} >
-                { productos.map(producto =>   (
+                
                     <div key={producto.id} className='card w-50 mt-2'>
                         <div className='card-header'>
                             Nombre: {producto.nombre}
@@ -60,13 +49,11 @@ const ItemListContainer = ({}) => {
                         </div>
     
                     </div>
-                    )
-                )}
+                    
     
                 
-                </div>
-
-    )
+            </div>
+  )
 }
 
-export default ItemListContainer
+export default ItemDetailContainer
